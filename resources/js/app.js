@@ -14,13 +14,16 @@ Vue.use(VueRouter);
 
 import Dashboard from "./components/Dashboard";
 import Profile from "./components/Profile";
+import Users from "./components/Users";
 
 const routes = [
     { path: "/dashboard", component: Dashboard },
-    { path: "/profile", component: Profile }
+    { path: "/profile", component: Profile },
+    { path: "/Users", component: Users }
 ];
 
 const router = new VueRouter({
+    mode: "history",
     routes // short for `routes: routes`
 });
 
