@@ -26,7 +26,11 @@ import Users from "./components/Users";
 import VueProgressBar from 'vue-progressbar';
 
 import swal from 'sweetalert2';
+
 window.swal = swal;
+
+
+window.fire = new Vue();
 
 Vue.use(VueProgressBar, {
     color: 'rgb(143, 255, 199)',
@@ -53,6 +57,15 @@ const router = new VueRouter({
     mode: "history",
     routes // short for `routes: routes`
 });
+
+const toast = swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+});
+window.toast = toast;
 
 const app = new Vue({
     router

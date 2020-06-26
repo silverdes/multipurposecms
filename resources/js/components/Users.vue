@@ -132,7 +132,7 @@
                       <i class="fas fa-edit green"></i>
                     </a>
                     /
-                    <a href="#">
+                    <a href="#" @click="deleteUser(user.id)">
                       <i class="fas fa-trash red"></i>
                     </a>
                   </td>
@@ -164,10 +164,48 @@ export default {
     };
   },
   methods: {
+    deleteUser(id) {
+      swal
+        .fire({
+          title: "Are you sure?",
+          text: "You won't be able to revert this!",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes, delete it!"
+        })
+        .then(result => {
+          if (result.value) {
+            this.form
+              .delete("api/user/" + id)
+              .then(() => {
+                swal.fire("Deleted!", "Your file has been deleted.", "success");
+                fire.$emit("AfterCreate");
+              })
+              .catch(() => {
+                swal("Failed", "There was something wrong.", "warning");
+              });
+          }
+        });
+    },
     createUser() {
       this.$Progress.start();
-      this.form.post("api/user");
-      this.$Progress.finish();
+      this.form
+        .post("api/user")
+        .then(() => {
+          fire.$emit("AfterCreate");
+
+          $("#Addnew").modal("hide");
+
+          toast.fire({
+            icon: "success",
+            title: "User added successfully"
+          });
+
+          this.$Progress.finish();
+        })
+        .catch(() => {});
     },
 
     loadUser() {
@@ -176,6 +214,10 @@ export default {
   },
   created() {
     this.loadUser();
+    fire.$on("AfterCreate", () => {
+      this.loadUser();
+    });
+    // setInterval(() => this.loadUser(), 3000);
   }
 };
 </script>
