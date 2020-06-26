@@ -16,11 +16,4 @@ mix.js("resources/js/app.js", "public/js").sass(
     "public/css"
 );
 
-mix.webpackConfig({
-    resolve: {
-        extensions: [".js", ".vue"],
-        alias: {
-            "@": __dirname + "/resources"
-        }
-    }
-});
+mix.js('node_modules/popper.js/dist/popper.js', 'public/js').sourceMaps()
