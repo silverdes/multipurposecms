@@ -22,6 +22,7 @@ import VueRouter from "vue-router";
 import Dashboard from "./components/Dashboard";
 import Profile from "./components/Profile";
 import Users from "./components/Users";
+import Developer from "./components/Developer";
 
 import VueProgressBar from 'vue-progressbar';
 
@@ -36,7 +37,22 @@ Vue.use(VueProgressBar, {
     color: 'rgb(143, 255, 199)',
     failedColor: 'red',
     height: '2px'
-})
+});
+
+Vue.component(
+    'passport-clients',
+    require('./components/passport/Clients.vue').default
+);
+
+Vue.component(
+    'passport-authorized-clients',
+    require('./components/passport/AuthorizedClients.vue').default
+);
+
+Vue.component(
+    'passport-personal-access-tokens',
+    require('./components/passport/PersonalAccessTokens.vue').default
+);
 
 Vue.filter('upText', function(text) {
     return text.charAt(0).toUpperCase() + text.slice(1);
@@ -50,7 +66,8 @@ Vue.use(VueRouter);
 const routes = [
     { path: "/dashboard", component: Dashboard },
     { path: "/profile", component: Profile },
-    { path: "/Users", component: Users }
+    { path: "/Users", component: Users },
+    { path: "/developer", component: Developer }
 ];
 
 const router = new VueRouter({

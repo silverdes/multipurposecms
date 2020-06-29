@@ -7,7 +7,7 @@
             <h3 class="card-title">Users Management</h3>
 
             <div class="card-tools">
-              <button class="btn btn-success" data-toggle="modal" data-target="#Addnew">
+              <button class="btn btn-success" @click="newModel">
                 <i class="fas fa-user-plus"></i>
                 Add new User
               </button>
@@ -24,12 +24,13 @@
                 <div class="modal-dialog modal-dialog-centered" role="document">
                   <div class="modal-content">
                     <div class="modal-header">
-                      <h5 class="modal-title" id="AddnewLabel">Modal title</h5>
+                      <h5 class="modal-title" id="AddnewLabel" v-show="!editmode">Add new user</h5>
+                      <h5 class="modal-title" id="AddnewLabel" v-show="editmode">Edit user's info</h5>
                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                       </button>
                     </div>
-                    <form @submit.prevent="createUser">
+                    <form @submit.prevent="editmode ? updateUser() : createUser()">
                       <div class="modal-body">
                         <div class="form-group">
                           <input
@@ -96,7 +97,8 @@
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Create</button>
+                        <button v-show="editmode" type="submit" class="btn btn-success">Update</button>
+                        <button v-show="!editmode" type="submit" class="btn btn-primary">Create</button>
                       </div>
                     </form>
                   </div>
@@ -128,7 +130,7 @@
                   </td>
                   <td>{{user.created_at | myDate }}</td>
                   <td>
-                    <a href="#">
+                    <a href="#" @click="editModel(user)">
                       <i class="fas fa-edit green"></i>
                     </a>
                     /
@@ -152,8 +154,10 @@
 export default {
   data() {
     return {
+      editmode: false,
       users: {},
       form: new Form({
+        id: "",
         name: "",
         email: "",
         password: "",
@@ -164,6 +168,34 @@ export default {
     };
   },
   methods: {
+    updateUser() {
+      //console.log("editing data");
+      this.$Progress.start();
+      this.form
+        .put("api/user/" + this.form.id)
+        .then(() => {
+          // successful
+          $("#Addnew").modal("hide");
+          swal.fire("Updated", "successfully updated user info", "success");
+          this.$Progress.finish();
+          fire.$emit("AfterCreate");
+        })
+        .catch(() => {
+          //catch error
+          this.$Progress.fail();
+        });
+    },
+    editModel(user) {
+      this.editmode = true;
+      this.form.reset();
+      $("#Addnew").modal("show");
+      this.form.fill(user);
+    },
+    newModel() {
+      this.editmode = false;
+      this.form.reset();
+      $("#Addnew").modal("show");
+    },
     deleteUser(id) {
       swal
         .fire({
@@ -180,7 +212,7 @@ export default {
             this.form
               .delete("api/user/" + id)
               .then(() => {
-                swal.fire("Deleted!", "Your file has been deleted.", "success");
+                swal.fire("Deleted!", "User has been deleted.", "success");
                 fire.$emit("AfterCreate");
               })
               .catch(() => {
