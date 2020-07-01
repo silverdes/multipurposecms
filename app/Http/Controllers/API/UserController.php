@@ -50,6 +50,52 @@ class UserController extends Controller
         ]);
     }
 
+    public function update(Request $request, $id)
+    {
+        //
+        $user = User::findOrFail($id);
+
+        $this->validate($request, [
+            'name' => 'required|string|min:3|max:191',
+            'email' => 'required|string|email|max:191|unique:users,email,' . $user->id,
+            'password' => 'sometimes|min:6|max:191'
+        ]);
+
+
+        $user->update($request->all());
+        return ['message' => 'Upload successfully'];
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = auth('api')->user();
+
+        $this->validate($request, [
+            'name' => 'required|string|min:3|max:191',
+            'email' => 'required|string|email|max:191|unique:users,email,' . $user->id,
+            'password' => 'sometimes|required|string|min:6|max:191'
+        ]);
+
+        $currentPhoto = $user->photo;
+
+        if ($request->photo != $currentPhoto) {
+            $name = time() . '.' . explode('/', explode(':', substr($request->photo, 0, strpos($request->photo, ';')))[1])[1];
+
+            \Image::make($request->photo)->save(public_path('img/profile/') . $name);
+
+            $request->merge(['photo' => $name]);
+        }
+
+        $user->update($request->all());
+
+        return ['message' => 'success'];
+    }
+
+    public function profile()
+    {
+        return auth('api')->user();
+    }
+
     /**
      * Display the specified resource.
      *
@@ -68,21 +114,7 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
-        //
-        $user = User::findOrFail($id);
 
-        $this->validate($request, [
-            'name' => 'required|string|min:3|max:191',
-            'email' => 'required|string|email|max:191|unique:users,email,' . $user->id,
-            'password' => 'sometimes|min:6|max:191'
-        ]);
-
-
-        $user->update($request->all());
-        return ['message' => 'Upload successfully'];
-    }
 
     /**
      * Remove the specified resource from storage.

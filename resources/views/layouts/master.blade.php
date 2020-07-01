@@ -212,7 +212,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
           <li class="nav-item">
             <router-link to="/developer" class="nav-link">
-              <i class="nav-icon fas fa-user"></i>
+              <i class="nav-icon fas fa-cogs"></i>
               <p>
                 Developer                
               </p>
@@ -231,10 +231,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <a class="nav-link" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
-                                                     <i class="nav-icon fas fa-power-off red"></i>
-                                        {{ __('Logout') }}
+                                                       <i class="nav-icon fas fa-power-off red"></i>
+                                                     	<p>Logout</p>
                                     </a>
-
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                         @csrf
                                     </form>
