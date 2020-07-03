@@ -14,12 +14,12 @@
                   <div class="text-center">
                     <img
                       class="profile-user-img img-fluid img-circle"
-                      src="#"
+                      :src="getProfilePicture()"
                       alt="User profile picture"
                     />
                   </div>
 
-                  <h3 class="profile-username text-center">Nina Mcintire</h3>
+                  <h3 class="profile-username text-center">{{loginEmail}}</h3>
 
                   <p class="text-muted text-center">Software Engineer</p>
 
@@ -170,7 +170,9 @@
                               class="form-control"
                               id="name"
                               placeholder="Name"
+                              :class="{ 'is-invalid' : form.errors.has('name')}"
                             />
+                            <has-error :form="form" field="name"></has-error>
                           </div>
                         </div>
                         <div class="form-group row">
@@ -178,11 +180,11 @@
                           <div class="col-lg-12">
                             <input
                               v-model="form.email"
-                              :class="{ 'is-invalid' : form.errors.has('email')}"
                               type="email"
                               class="form-control"
                               id="inputEmail"
                               placeholder="Email"
+                              :class="{ 'is-invalid' : form.errors.has('email')}"
                             />
                             <has-error :form="form" field="email"></has-error>
                           </div>
@@ -194,8 +196,10 @@
                               class="form-control"
                               id="inputExperience"
                               placeholder="Experience"
-                              v-model="form.bio"
+                              v-model="form.experience"
+                              :class="{ 'is-invalid': form.errors.has('experience') }"
                             ></textarea>
+                            <has-error :form="form" field="experience"></has-error>
                           </div>
                         </div>
                         <div class="form-group row">
@@ -213,7 +217,7 @@
                         </div>
                         <div class="form-group row">
                           <label for="inputPassport" class="col-lg-12 col-form-label">
-                            Passport
+                            Password
                             <small>(leave empty if not changing)</small>
                           </label>
                           <div class="col-lg-12">
@@ -258,7 +262,7 @@ export default {
         email: "",
         password: "",
         type: "",
-        bio: "",
+        experience: "",
         photo: ""
       })
     };
@@ -267,6 +271,10 @@ export default {
     console.log("Component mounted");
   },
   methods: {
+    getProfilePicture() {
+      let prefix = this.form.photo.match(/\//) ? "" : "/img/profile/";
+      return prefix + this.form.photo;
+    },
     updateInfo() {
       this.$Progress.start();
       this.form
@@ -304,6 +312,11 @@ export default {
 
   created() {
     axios.get("api/profile").then(({ data }) => this.form.fill(data));
+  },
+  computed: {
+    loginEmail() {
+      return this.form.name;
+    }
   }
 };
 </script>
